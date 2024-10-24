@@ -82,7 +82,7 @@ while(True):
         option = input('Type Q to [Q]uit.\nType C to [C]ontinue.\n')
         option = option.capitalize()
         if option not in options:
-            print('Please, type only one the letters [Q] or [C].\n')
+            print('Please, type only one of the letters [Q] or [C].\n')
         elif option == 'Q':
             sys.exit()
         elif option == 'C':
