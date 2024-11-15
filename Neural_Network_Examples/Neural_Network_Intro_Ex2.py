@@ -1,151 +1,151 @@
 ##############################################################################################################################
 #
-# Agora que já sambemos os processos que ocorrem em uma rede neural, podemos criar uma classe para a mesma.
-# Classes são os principais blocos de construção da chamada programação orientada a objetos (OOP - Objetct Oriented Programming). 
-# 
-# A classe RedeNeural irá gerar aleatoriamente valores inicias para as variáveis pesos e bias. Além disso, ao instanciar 
-# o objeto RedeNeural, precisamos passar como parâmetro a taxa de aprendizagem alfa. Iremos escrever uma função para fazer predição 
-# chamada predicao(), bem como métodos para calcular as derivadas _calcula_derivadas() e pra atualizar os parâmetros 
-# __atualiza_parametros().
+# Now that we know the processes that occur in a neural network, we can create a class for it.
+# Classes are the main building blocks of so-called object-oriented programming (OOP).
+#
+# The NeuralNetwork class will randomly generate initial values ​​for the weights and bias variables. In addition, when instantiating
+# the NeuralNetwork object, we need to pass the alpha learning rate as a parameter. We will write a function to make predictions
+# called prediction(), as well as methods to calculate the derivatives _calculates_derivatives() and to update the parameters
+# __updates_parameters().
 #  
 ################################################################################################################################
-# Importando as bibliotecas usadas no exemplo
+# Importing the libraries used in the example
 import numpy as np
 import matplotlib.pyplot as plt
 
 print("\n================================================================================================================")
-print("\n                                        CRIANDO A CLASSE RedeNeural                                             ")
+print("\n                                  CREATING THE NeuralNetwork CLASS                                      ")
 print("\n================================================================================================================")
 
-class RedeNeural:
+class NeuralNetwork:
     
-    # Método construtor
+    # Constructor method
     def __init__(self, alfa):
-        self.pesos = np.array([np.random.randn(), np.random.randn()])
+        self.weights = np.array([np.random.randn(), np.random.randn()])
         self.bias = np.random.randn()
-        self.taxa_de_aprendizado = alfa
+        self.learning_rate = alfa
     
-    # Método da função sigmoidal    
+   # Sigmoidal function method   
     def __sigmoid(self, x):
         return 1 / (1 + np.exp(-x))
     
-    # Método que calcula a derivada da função sigmoidal
-    def __derivada_da_sigmoid(self, x):
+    # Method that calculates the derivative of the sigmoidal function
+    def __derivative_of_sigmoid(self, x):
         return self.__sigmoid(x) * (1 - self.__sigmoid(x))
     
-    # Função para realizar a predição a partir do vetores de entrada, pesos e o valor do bias
-    def predicao(self, v_entrada):
-        camada_1 = np.dot(v_entrada, self.pesos) + self.bias
-        camada_2 = self.__sigmoid(camada_1)
-        predicao = camada_2
-        return predicao
+    # Function to perform the prediction from the input vectors, weights and the bias value
+    def prediction(self, v_input):
+        layer_1 = np.dot(v_input, self.weights) + self.bias
+        layer_2 = self.__sigmoid(layer_1)
+        prediction = layer_2
+        return prediction
     
-    # Método para calcular o gradiente descendente 
-    def __calcula_gradiente(self, v_entrada, v_respostas_corretas):
-        camada_1 = np.dot(v_entrada, self.pesos) + self.bias
-        camada_2 = self.__sigmoid(camada_1)
-        predicao = camada_2
+    # Function to perform the prediction from the input vectors, weights and the bias value 
+    def __calculate_gradient(self, v_input, v_correct_answers):
+        layer_1 = np.dot(v_input, self.weights) + self.bias
+        layer_2 = self.__sigmoid(layer_1)
+        prediction = layer_2
         
-        derivada_erro_predicao_camada_2 = 2 * (predicao - v_respostas_corretas)
+        derivative_prediction_error_layer_2 = 2 * (prediction - v_correct_answers)
         
-        derivada_predicao_camada_1 = self.__derivada_da_sigmoid(camada_1)
+        derivative_prediction_layer_1 = self.__derivative_of_sigmoid(layer_1)
         
-        derivada_bias_camada_1 = 1
+        derivative_bias_layer_1 = 1
         
-        derivada_pesos_camada_1 = (0 * self.pesos) + (1 * v_entrada)
+        derivative_weights_layer_1 = (0 * self.weights) + (1 * v_input)
         
-        valor_de_ajuste_do_bias = derivada_erro_predicao_camada_2 * derivada_predicao_camada_1 * derivada_bias_camada_1
+        bias_adjustment_value = derivative_prediction_error_layer_2 * derivative_prediction_layer_1 * derivative_bias_layer_1
         
-        valor_de_ajuste_dos_pesos = derivada_erro_predicao_camada_2 * derivada_predicao_camada_1 * derivada_pesos_camada_1
+        adjustment_value_of_the_weights = derivative_prediction_error_layer_2 * derivative_prediction_layer_1 * derivative_weights_layer_1
         
-        return valor_de_ajuste_do_bias, valor_de_ajuste_dos_pesos
+        return bias_adjustment_value, adjustment_value_of_the_weights
     
     
-    def __atualiza_parametros(self, valor_de_ajuste_dos_bias, valor_de_ajuste_dos_pesos):
+    def __update_parameters(self, bias_adjustment_value, adjustment_value_of_the_weights):
         
-        self.bias = self.bias - (valor_de_ajuste_dos_bias * self.taxa_de_aprendizado)
+        self.bias = self.bias - (bias_adjustment_value * self.learning_rate)
         
-        self.pesos = self.pesos - (valor_de_ajuste_dos_pesos * self.taxa_de_aprendizado)
+        self.weights = self.weights - (adjustment_value_of_the_weights * self.learning_rate)
         
     
-    def treinamento(self, v_entradas, v_respostas_corretas, numero_de_iteracoes):
+    def training(self, v_inputs, v_correct_answers, number_of_iterations):
         
-        erros_cumulativos = []
+        cumulative_errors = []
         
-        for i in range(numero_de_iteracoes):
-            # Seleciona aleatoriamente um dado de treinamento
-            indice_aleatorio = np.random.randint(len(v_entradas))
+        for i in range(number_of_iterations):
+            # Randomly selects a training data
+            random_index = np.random.randint(len(v_inputs))
             
-            vetor_entrada = v_entradas[indice_aleatorio]
-            vetor_resposta_correta = v_respostas_corretas[indice_aleatorio]
+            vetor_input = v_inputs[random_index]
+            correct_answer_vector = v_correct_answers[random_index]
         
-            # Calcula o gradiente e atualiza os pesos e o bias
-            valor_de_ajuste_do_bias, valor_de_ajuste_dos_pesos = self.__calcula_gradiente(vetor_entrada, vetor_resposta_correta)
+            # Calculate the gradient and update the weights e o bias
+            bias_adjustment_value, adjustment_value_of_the_weights = self.__calculate_gradient(vetor_input, correct_answer_vector)
         
-            self.__atualiza_parametros(valor_de_ajuste_do_bias, valor_de_ajuste_dos_pesos)
+            self.__update_parameters(bias_adjustment_value, adjustment_value_of_the_weights)
         
-            # Se a iteração é múltipla de 100, executamos as linhas de código a seguir para ver como o erro se comporta a cada 100 iterações
+            # If the iteration is a multiple of 100, we execute the following lines of code to see how the error behaves every 100 iterations
             if i % 100 == 0:
                 
-                erro_cumulativo = 0
+                cumulative_error = 0
             
-                # Varre todos os valores de erros gerados em cada iteração
-                for indice_de_dado in range(len(v_entradas)):
+                # Loop through all error values ​​generated in each iteration
+                for data_index in range(len(v_inputs)):
                     
-                    dado_de_entrada = v_entradas[indice_de_dado]
-                    resposta_correta = v_respostas_corretas[indice_de_dado]
+                    dado_de_input = v_inputs[data_index]
+                    correct_answer = v_correct_answers[data_index]
                     
-                    predicao = self.predicao(dado_de_entrada)
-                    erro = np.square(predicao - resposta_correta)
+                    prediction = self.prediction(dado_de_input)
+                    erro = np.square(prediction - correct_answer)
                     
-                    erro_cumulativo = erro_cumulativo + erro
+                    cumulative_error = cumulative_error + erro
                     
-                erros_cumulativos.append(erro_cumulativo)
+                cumulative_errors.append(cumulative_error)
         
-        return erros_cumulativos    
+        return cumulative_errors  
         
 ##############################################################################################################################
 #
-# Uma vez que a nossa classe RedeNeural está criada, basta criar uma instancia da mesma e chamar a função .predicao() para
-# que a rede realize uma predição para as respostas de saída em função das variáveis de entrada
+# Once our NeuralNetwork class is created, simply create an instance of it and call the .prediction() function so that
+# the network can make a prediction for the output responses based on the input variables
 #
 ##############################################################################################################################
 
-# Antes de instanciar a nossa Rede Neural, primeiramente escolhemos o valor da taxa de aprendizagem alfa
+# Before instantiating our Neural Network, we first choose the value of the learning rate alpha
 alfa = 0.1
 
-# Instanciando a nossa Rede Neural
-rede_neural = RedeNeural(alfa)
+# Instantiating our Neural Network
+rede_neural = NeuralNetwork(alfa)
 
-# Declarando os vetores de entrada:
-v_entrada = np.array([1.5 , 2])
+# Declaring the input vectors:
+v_input = np.array([1.5 , 2])
 
-valor_predito = rede_neural.predicao(v_entrada)
+predicted_value = rede_neural.prediction(v_input)
 
-print(f"\n O valor predito pela rede neural foi: {valor_predito}")
+print(f"\n The value predicted by the neural network was: {predicted_value}")
 
 ################################################################################################################################
 #
-# Apesar da nossa rede neural estar realizando as predições, ainda precisamo treiná-la. O objetivo é fazer a rede aprender a 
-# detectar padrões de respostas corretas em função dos dados de entrada. Isso significa que a rede neural precisa saber se 
-# adaptar aos novos dados de entrada que possuam a mesma distribuição de probabilidade que os dados de treinamento.
+# Although our neural network is making predictions, we still need to train it. The goal is to make the network learn to
+# detect patterns of correct responses based on the input data. This means that the neural network needs to know how to
+# adapt to new input data that has the same probability distribution as the training data.
 #
-# O Gradiente Descendente Estocástico é uma técnica em que, a cada iteração, o modelo (rede neural) realiza uma predição
-# para dados de treinamento selecionados aleatoriamente, ou seja, de maneira estocástica, calculando o erro e atualiza os
-# parâmetros.
+# Stochastic Gradient Descent is a technique in which, at each iteration, the model (neural network) makes a prediction
+# for randomly selected training data, that is, in a stochastic manner, calculating the error and updating the
+# parameters.
 #
-# Para isso, precisamos criar um método para a classe RedeNeural que irá treinar a nossa rede neural com dados de treinamento.
+# To do this, we need to create a method for the NeuralNetwork class that will train our neural network with training data.
 #
-# Também iremos salvar os erros de cada iteração com o objetivo de mostrar através de um gráfico como o erro se comporta 
-# conforme o número de iterações aumenta.
+# We will also save the errors of each iteration in order to show through a graph how the error behaves
+# as the number of iterations increases.
 ###############################################################################################################################
 print("\n================================================================================================================")
-print("\n                                    TREINANDO A REDE NEURAL COM MAIS DADOS                                      ")
+print("\n                                  TRAINING THE NEURAL NETWORK WITH MORE DATA                                     ")
 print("\n================================================================================================================")
 
 # Dataset 1
-# Valores de entrda
-v_entrada = np.array(
+# Input values
+v_input = np.array(
                     [
                         [3, 1.5], 
                         [2, 1], 
@@ -158,12 +158,12 @@ v_entrada = np.array(
                     ]
                    )
 
-# Valores de saída
-v_respostas_corretas = np.array([0, 1, 0, 1, 0, 1, 1, 0])
+# Output values
+v_correct_answers = np.array([0, 1, 0, 1, 0, 1, 1, 0])
 
 # Dataset 2
-# Valores de entrda
-# v_entrada = np.array(
+# Input values
+# v_input = np.array(
 #                     [
 #                         [3, 1.5], 
 #                         [2, 1], 
@@ -184,40 +184,32 @@ v_respostas_corretas = np.array([0, 1, 0, 1, 0, 1, 1, 0])
 #                     ]
 #                    )
 
-# Valores de saída
-# v_respostas_corretas = np.array([0, 1, 0, 1, 0, 1, 1, 0,
+# Output values
+# v_correct_answers = np.array([0, 1, 0, 1, 0, 1, 1, 0,
 #                                  1, 0, 0, 0, 0, 0, 1, 1])
 
-numero_de_iteracoes = 10000
+number_of_iterations = 10000
 
-erro_de_treinamento = rede_neural.treinamento(v_entrada, v_respostas_corretas, numero_de_iteracoes )
+training_error = rede_neural.training(v_input, v_correct_answers, number_of_iterations )
 
-plt.plot(erro_de_treinamento)
+plt.plot(training_error)
 plt.xlabel("Iterações")
 plt.ylabel("Erro durante as iterações")
 plt.show()
 
 ##########################################################################################################
 # 
-# A partir do gráfico do Erro em função das iterações, podemos ver que o erro total começa com um valor
-# elevado e tende a um valor relativamente menor e oscila ao redor de um valor médio. 
-# Essa oscilações bruscas decorrem da seleção aleatória dos dados de treinamento, bem como, por termos uma 
-# quantidade pequena de dados.
-# 
-# Não é recomendado usar os dados de treinamento para avaliar a performance da rede neural, pois são dados
-# que após o treinameto ela já estará sabendo como responder em função das entradas. Isso pode levar ao caso
-# de overfiting, quando a rede neural fica tão boa em prever os dados de treinamento que não é capaz de 
-# generalizar para dados novos.
+# From the Error vs. Iteration graph, we can see that the total error starts with a high value and tends to a relatively lower value and oscillates around an average value.
+# These sudden oscillations are due to the random selection of training data, as well as the small amount of data.
 #
-# Neste exemplo o objetivo principal é entender os fundamentos básicos de construção de uma rede neural e
-# por isso usamos um conjunto reduzido de dados. Geralmente, modelos de aprendizado profundo (deep learning)
-# precisam de uma quantidade grande de dados devido às complexidades de certos problemas, por exemplo, o
-# reconhecimento de imagens ou sinais de áudio, entre outros. Devido aos diferentes níveis de complexidade,
-# usar apenas uma ou duas camadas na rede neural não é sufiente, de modo que chamamos de aprendizado profundo
-# justamente o fato da rede neural ser composta por muitas camadas. 
+# It is not recommended to use training data to evaluate the performance of the neural network, since this data is data that, after training, it will already know how to respond to the inputs. This can lead to overfitting, when the neural network becomes so good at predicting the training data that it is unable to generalize to new data.
 #
-# Adicionando mais camadas à rede neural e vários tipos de funções de ativação, aumentamos o poder de
-# predição da mesma. Um exemplo de aplicação desse nível de complexidade é o reconhecimento facial, como
-# alguns celulares possuem ao desbloquear a tela quando reconhce pela imagem quem é o dono ou quem foi 
-# cadastrado para poder usar.
+# In this example, the main objective is to understand the basic foundations of building a neural network, which is why we use a small set of data. Deep learning models generally need a large amount of data due to the complexities of certain problems, such as image recognition or audio signals, among others. Due to the different levels of complexity,
+# using only one or two layers in the neural network is not enough, so we call it deep learning
+# precisely because the neural network is composed of many layers.
+#
+# By adding more layers to the neural network and various types of activation functions, we increase its
+# prediction power. An example of an application of this level of complexity is facial recognition, as
+# some cell phones have when unlocking the screen when they recognize the owner or who has been
+# registered to use it.
 ############################################################################################################
