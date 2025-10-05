@@ -21,15 +21,14 @@ plt.rcParams["figure.autolayout"] = True
 
 
 #Creating the dataframe
-data = {'Mixture 1':[22.02   ,   23.83  ,   26.67  ,    25.38  ,    25.49   ,   23.50  ,    25.90   ,  24.89],
-         'Mixture 2':[21.49   ,   22.67  ,    24.62 ,     24.18 ,     22.78  ,    22.56 ,     24.46  ,  23.79],
-         'Mixture 3':[20.33   ,   21.67  ,    24.67 ,     22.45 ,     22.29  ,    21.95 ,     20.49  ,   21.81]
-         }
+pastry_densities_data = {
+    'Mixture 1':[22.02   ,   23.83  ,   26.67  ,    25.38  ,    25.49   ,   23.50  ,    25.90   ,  24.89],
+    'Mixture 2':[21.49   ,   22.67  ,    24.62 ,     24.18 ,     22.78  ,    22.56 ,     24.46  ,  23.79],
+    'Mixture 3':[20.33   ,   21.67  ,    24.67 ,     22.45 ,     22.29  ,    21.95 ,     20.49  ,   21.81]
+    }
 
-
-
-
-df = pd.DataFrame(data = data)
+# Create a DataFrame
+df = pd.DataFrame(data = pastry_densities_data)
 
 # View dataframe
 print(df)
@@ -38,51 +37,27 @@ print(df)
 boxplot = df[['Mixture 1', 'Mixture 2', 'Mixture 3']].plot(kind='box', title='boxplot')
 plt.show()
 
-# Calculating the first and third quartiles with numpy
-q3_Numpy_Mixture1, q1_Numpy_Mixture1 = np.percentile(data["Mixture 1"], [75, 25])
-
-# Calculating the interquartile range (IQR) with numpy
-IQR_Numpy_Mixture1 = q3_Numpy_Mixture1 - q1_Numpy_Mixture1
-
-print("\n ========================================================================")
+# Calculating the first and third quartiles with numpy resources only
+# and the interquartile range (IQR)
+print("\n" + 50*"=")
 print("\n The values ​​below were obtained using numpy")
-print("\n ========================================================================")
+print("\n" + 50*"=")
 
-print("\n Mixture 1")
-print("\n Max Value for Mixture 1: ", max(data["Mixture 1"]))
-print("\n Min VAlue for Mixture 1: ", min(data["Mixture 1"]))
-print("\n 1st quartile (q1) for Mixture 1: ", q1_Numpy_Mixture1)
-print("\n 3rd quartile (q3) for Mixture 1: ", q3_Numpy_Mixture1)
-print("\n IQR_Numpy for Mixture 1: ", IQR_Numpy_Mixture1)
+for key in pastry_densities_data:
 
+    q3_Numpy_Mixture1, q1_Numpy_Mixture1 = np.percentile(pastry_densities_data[key], [75, 25])
 
-# Calculating the first and third quartiles with numpy
-q3_Numpy_Mixture2, q1_Numpy_Mixture2 = np.percentile(data["Mixture 2"], [75, 25])
+    # Calculating the interquartile range (IQR) with numpy
+    IQR_Numpy_Mixture1 = q3_Numpy_Mixture1 - q1_Numpy_Mixture1
 
-# Calculating the interquartile range (IQR) with numpy
-IQR_Numpy_Mixture2 = q3_Numpy_Mixture2 - q1_Numpy_Mixture2
-
-
-print("\n Mixture 2")
-print("\n Max Value for Mixture 2: ", max(data["Mixture 2"]))
-print("\n Min VAlue for Mixture 2: ", min(data["Mixture 2"]))
-print("\n 1st quartile (q1) for Mixture 2: ", q1_Numpy_Mixture2)
-print("\n 3rd quartile (q3) for Mixture 2: ", q3_Numpy_Mixture2)
-print("\n IQR_Numpy for Mixture 2: ", IQR_Numpy_Mixture2)
-
-# Calculating the first and third quartiles with numpy
-q3_Numpy_Mixture3, q1_Numpy_Mixture3 = np.percentile(data["Mixture 3"], [75, 25])
-
-# Calculating the interquartile range (IQR) with numpy
-IQR_Numpy_Mixture3 = q3_Numpy_Mixture3 - q1_Numpy_Mixture3
+    print(f"\n {key}")
+    print(f"\n Max Value for {key}: {max(pastry_densities_data[key])}")
+    print(f"\n Min Value for {key}: {min(pastry_densities_data[key])}")
+    print(f"\n 1st quartile (q1) for {key}: {q1_Numpy_Mixture1:.2f}")
+    print(f"\n 3rd quartile (q3) for {key}: {q3_Numpy_Mixture1:.2f}")
+    print(f"\n IQR_Numpy for {key}: {IQR_Numpy_Mixture1:.2f}")
 
 
-print("\n Mixture 3")
-print("\n Max Value for Mixture 3: ", max(data["Mixture 3"]))
-print("\n Min VAlue for Mixture 3: ", min(data["Mixture 3"]))
-print("\n 1st quartile (q1) for Mixture 3: ", q1_Numpy_Mixture3)
-print("\n 3rd quartile (q3) for Mixture 3: ", q3_Numpy_Mixture3)
-print("\n IQR_Numpy for Mixture 3: ", IQR_Numpy_Mixture3)
 
 ###############################################################################
 # NOTE: The parameters calculated with numpy generally provided different results
@@ -146,28 +121,17 @@ def IQR_calc(a):
         
     return IQR   
 
-print("\n ========================================================================")
+# Printing the results obtained with the method used on the statology.org website
+print("\n" + 70*"=")
 print("\n The values ​​below were obtained according to the method used in statology.org")
-print("\n ========================================================================")
+print("\n" + 70*"=")
 
-print("\n Mixture 1")
-print("\n Max Value for Mixture 1: ", max(data["Mixture 1"]))
-print("\n Min VAlue for Mixture 1: ", min(data["Mixture 1"]))
-print("\n 1st quartile (q1) for Mixture 1: ", first_quartile(data["Mixture 1"]))
-print("\n 3rd quartile (q3) for Mixture 1: ", third_quartile(data["Mixture 1"]))
-print("\n IQR_Numpy for Mixture for Mixture 1: ", IQR_calc(data["Mixture 1"]))
+for key in pastry_densities_data:
+    print(f"\n {key}")
+    print(f"\n Max Value for {key}: {max(pastry_densities_data[key])}")
+    print(f"\n Min Value for {key}: {min(pastry_densities_data[key])}")
+    print(f"\n 1st quartile (q1) for {key}: {first_quartile(pastry_densities_data[key]):.2f}")
+    print(f"\n 3rd quartile (q3) for {key}: {third_quartile(pastry_densities_data[key]):.2f}")
+    print(f"\n IQR_Numpy for {key}: {IQR_calc(pastry_densities_data[key]):.2f}")
 
-print("\n Mixture 2")
-print("\n Max Value for Mixture 2: ", max(data["Mixture 2"]))
-print("\n Min VAlue for Mixture 2: ", min(data["Mixture 2"]))
-print("\n 1st quartile (q1) for Mixture 2: ", first_quartile(data["Mixture 2"]))
-print("\n 3rd quartile (q3) for Mixture 2: ", third_quartile(data["Mixture 2"]))
-print("\n IQR_Numpy for Mixture for Mixture 2: ", IQR_calc(data["Mixture 2"]))
-
-print("\n Mixture 3")
-print("\n Max Value for Mixture 3: ", max(data["Mixture 3"]))
-print("\n Min VAlue for Mixture 3: ", min(data["Mixture 3"]))
-print("\n 1st quartile (q1) for Mixture 3: ", first_quartile(data["Mixture 3"]))
-print("\n 3rd quartile (q3) for Mixture 3: ", third_quartile(data["Mixture 3"]))
-print("\n IQR_Numpy for Mixture for Mixture 3: ", IQR_calc(data["Mixture 3"]))
 
